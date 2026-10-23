@@ -13,7 +13,7 @@ public sealed class PrinterService(SettingsStore settingsStore)
     private static readonly byte[] BoldOn = [0x1B, 0x45, 0x01];
     private static readonly byte[] BoldOff = [0x1B, 0x45, 0x00];
     private static readonly byte[] NormalSize = [0x1D, 0x21, 0x00];
-    private static readonly byte[] ComfortableLineSpacing = [0x1B, 0x33, 0x24];
+    private static readonly byte[] ComfortableLineSpacing = [0x1B, 0x33, 0x30];
     private static readonly byte[] Cut = [0x1D, 0x56, 0x00];
     private static readonly Encoding PrinterEncoding;
 
@@ -74,6 +74,7 @@ public sealed class PrinterService(SettingsStore settingsStore)
         Command(output, CodePage858);
         Command(output, NormalSize);
         Command(output, ComfortableLineSpacing);
+        Text(output, "\n\n\n\n");
 
         Command(output, AlignCenter);
         Command(output, BoldOn);
@@ -89,7 +90,7 @@ public sealed class PrinterService(SettingsStore settingsStore)
         Separator(output);
 
         Command(output, BoldOn);
-        Line(output, Columns("Article", "Qté", "PU", "Total"));
+        Line(output, Columns("Article", "Qté", "PU TTC", "Total TTC"));
         Command(output, BoldOff);
         foreach (var item in ticket.Lines)
         {
@@ -104,6 +105,7 @@ public sealed class PrinterService(SettingsStore settingsStore)
             {
                 Line(output, continuation);
             }
+            Line(output, string.Empty);
         }
 
         Separator(output);
@@ -125,7 +127,7 @@ public sealed class PrinterService(SettingsStore settingsStore)
             }
         }
 
-        Text(output, "\n\n\n");
+        Text(output, "\n\n\n\n\n\n");
         Command(output, Cut);
         return output.ToArray();
     }
@@ -138,8 +140,9 @@ public sealed class PrinterService(SettingsStore settingsStore)
         Command(output, NormalSize);
         Command(output, ComfortableLineSpacing);
         Command(output, AlignLeft);
+        Text(output, "\n\n\n\n");
         Text(output, text.Replace("\r\n", "\n"));
-        Text(output, "\n\n\n");
+        Text(output, "\n\n\n\n\n\n");
         Command(output, Cut);
         return output.ToArray();
     }
